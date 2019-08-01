@@ -6,6 +6,7 @@ import com.ym.mall.model.UmsAdmin;
 import com.ym.mall.model.UmsAdminExample;
 import com.ym.mall.model.UmsPermission;
 import com.ym.mall.service.UmsAdminService;
+import com.ym.mall.util.JwtTokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -32,7 +33,8 @@ public class UmsAdminServiceImpl implements UmsAdminService {
     @Autowired
     private UmsAdminRoleRelationDao umsAdminRoleRelationDao;
 
-
+    @Autowired
+    private JwtTokenUtil jwtTokenUtil;
     @Autowired
     private UserDetailsService userDetailsService;
     /**
@@ -64,17 +66,19 @@ public class UmsAdminServiceImpl implements UmsAdminService {
         try {
             //密码需要客户端加密后传递
             UserDetails userDetails = userDetailsService.loadUserByUsername(userName);
+            log.info("打印密码：{}",userDetails.getPassword());
             //密码校验
-            if(password.equals(userDetails.getPassword())){
+            if(!password.equals(userDetails.getPassword())){
                 throw new BadCredentialsException("密码不正确");
             }
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
             SecurityContextHolder.getContext().setAuthentication(authentication);
-
+            token = jwtTokenUtil.generateToken(userDetails);  //JWT生成Token
+            log.info("登录时JWT生成的TOKEN为：{}",token);
         }catch (AuthenticationException e){
             log.info("登录异常：{}",e.getMessage());
         }
-        return null;
+        return token;
     }
 
     /**
