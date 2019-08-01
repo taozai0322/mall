@@ -3,8 +3,11 @@ package com.ym.mall.mapper;
 import com.ym.mall.model.UmsAdmin;
 import com.ym.mall.model.UmsAdminExample;
 import java.util.List;
+
+import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
+@Mapper
 public interface UmsAdminMapper {
     long countByExample(UmsAdminExample example);
 
