@@ -3,8 +3,10 @@ package com.ym.mall.mapper;
 import com.ym.mall.model.UmsAdminLoginLog;
 import com.ym.mall.model.UmsAdminLoginLogExample;
 import java.util.List;
-import org.apache.ibatis.annotations.Param;
 
+import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Param;
+@Mapper
 public interface UmsAdminLoginLogMapper {
     long countByExample(UmsAdminLoginLogExample example);
 

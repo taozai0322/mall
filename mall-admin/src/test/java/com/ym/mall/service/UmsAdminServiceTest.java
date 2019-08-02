@@ -1,9 +1,11 @@
 package com.ym.mall.service;
 
 import com.ym.mall.dao.UmsAdminRoleRelationDao;
+import com.ym.mall.mapper.UmsAdminLoginLogMapper;
 import com.ym.mall.mapper.UmsAdminMapper;
 import com.ym.mall.model.UmsAdmin;
 import com.ym.mall.model.UmsAdminExample;
+import com.ym.mall.model.UmsAdminLoginLog;
 import com.ym.mall.model.UmsPermission;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
@@ -12,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -31,6 +34,8 @@ public class UmsAdminServiceTest {
     @Autowired
     private UmsAdminRoleRelationDao umsAdminRoleRelationDao;
 
+    @Autowired
+    private UmsAdminLoginLogMapper umsAdminLoginLogMapper;
     @Test
     public void queryUser(){
         UmsAdminExample umsAdminExample = new UmsAdminExample();
@@ -49,6 +54,16 @@ public class UmsAdminServiceTest {
         for(UmsPermission umsPermission:permissionList){
             log.info("遍历权限：{}",umsPermission);
         }
+
+    }
+
+    @Test
+    public void loginLog(){
+        UmsAdminLoginLog umsAdminLoginLog = new UmsAdminLoginLog();
+        umsAdminLoginLog.setIp("192.168.121.12");
+        umsAdminLoginLog.setAddress("重庆");
+        umsAdminLoginLog.setCreateTime(new Date());
+        umsAdminLoginLogMapper.insert(umsAdminLoginLog);
 
     }
 }

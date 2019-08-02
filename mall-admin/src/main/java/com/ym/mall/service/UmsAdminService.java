@@ -1,5 +1,6 @@
 package com.ym.mall.service;
 
+import com.ym.mall.dto.UmsAdminRegisterParams;
 import com.ym.mall.model.UmsAdmin;
 import com.ym.mall.model.UmsPermission;
 import org.apache.ibatis.annotations.Param;
@@ -20,6 +21,12 @@ public interface UmsAdminService {
      */
     UmsAdmin getAdminByUsername(String username);
 
+    /**
+     * 后台管理员用户注册
+     * @param registerParams
+     * @return
+     */
+    UmsAdmin register(UmsAdminRegisterParams registerParams);
     /**
      * 登录功能
      * @param userName

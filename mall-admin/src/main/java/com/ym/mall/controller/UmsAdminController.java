@@ -2,11 +2,14 @@ package com.ym.mall.controller;
 
 import com.ym.mall.common.api.ResponseResult;
 import com.ym.mall.dto.UmsAdminLoginParams;
+import com.ym.mall.dto.UmsAdminRegisterParams;
+import com.ym.mall.model.UmsAdmin;
 import com.ym.mall.service.UmsAdminService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -28,6 +31,8 @@ public class UmsAdminController {
 
     @Autowired
     private UmsAdminService umsAdminService;
+    @Value("${jwt.tokenHead}")
+    private String tokenHead;
     
     @ApiOperation(value="登录之后返回token")
     @PostMapping(value = "/login")
@@ -37,9 +42,20 @@ public class UmsAdminController {
         if(token == null){
             return ResponseResult.fail("用户名或者密码错误");
         }
-        Map<String,String> map = new HashMap<>();
-        map.put("token",token);
-        return ResponseResult.success(map);
+        Map<String,String> tokenMap = new HashMap<>();
+        tokenMap.put("token",token);
+        tokenMap.put("tokenHead",tokenHead);
+        return ResponseResult.success(tokenMap);
     }
 
+    @ApiOperation(value = "用户注册")
+    @PostMapping(value = "/register")
+    public ResponseResult register(@RequestBody UmsAdminRegisterParams umsAdminRegisterParams){
+        log.info("用户的注册信息：{}",umsAdminRegisterParams);
+        UmsAdmin umsAdmin = umsAdminService.register(umsAdminRegisterParams);
+        if(umsAdmin == null){
+            return ResponseResult.fail("注册失败,用户名可能重复");
+        }
+        return ResponseResult.success(umsAdmin);
+    }
 }

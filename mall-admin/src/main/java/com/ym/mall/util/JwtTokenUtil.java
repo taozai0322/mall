@@ -111,6 +111,7 @@ public class JwtTokenUtil {
      */
     public boolean isTokenExpired(String token){
         Date expiredDate = getExpiredDateFromToken(token);
+        log.info("token的有效时间：{}",expiredDate);
         return expiredDate.before(new Date()); //当expiredDate小于new Date()时，返回TRUE，当大于等于时，返回false
     }
 

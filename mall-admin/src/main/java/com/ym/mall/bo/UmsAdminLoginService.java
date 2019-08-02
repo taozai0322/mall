@@ -19,7 +19,7 @@ import java.util.List;
 @Service
 public class UmsAdminLoginService implements UserDetailsService {
     @Autowired
-    private com.ym.mall.service.UmsAdminService umsAdminService;
+    private UmsAdminService umsAdminService;
 
 
     @Override

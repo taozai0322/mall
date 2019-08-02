@@ -4,7 +4,11 @@ import com.ym.mall.util.JwtTokenUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import javax.servlet.FilterChain;
@@ -37,9 +41,26 @@ public class JwtAuthenticationTokenFilter extends OncePerRequestFilter {
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
-                                    FilterChain chainhain) throws ServletException, IOException {
-        String header = request.getHeader(this.tokenHeader);
-        log.info("JWT登录过滤器获取的header:{}",header);
-
+                                    FilterChain chain) throws ServletException, IOException {
+        String authHeader = request.getHeader(this.tokenHeader);
+        log.info("JWT登录过滤器获取的header:{}",authHeader);
+        if(authHeader != null && authHeader.startsWith(this.tokenHead)){
+            //authHeader的截取
+            String authToken = authHeader.substring(tokenHead.length());
+            //从token获取用户名
+            String username = jwtTokenUtil.getUsernameFromToken(authToken);
+            log.info("从token中获取的用户名:{}",username);
+            if(username != null && SecurityContextHolder.getContext().getAuthentication() == null){
+                UserDetails userDetails = userDetailsService.loadUserByUsername(username);
+                //验证token是否有效
+                if(jwtTokenUtil.validateToken(authToken,userDetails)){
+                    UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                    log.info("验证的用户对象：{}",username);
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+                }
+            }
+        }
+        chain.doFilter(request,response);
     }
 }
