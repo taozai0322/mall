@@ -10,7 +10,8 @@ public enum ResultCode implements ErrorCode{
     FAIL("500","操作失败"),
     VALIDATE_PARAMS_FAILED("404", "参数检验失败"),
     UNAUTHORIZED("401", "暂未登录或token已经过期"),
-    FORBIDDEN("403", "没有相关权限");
+    FORBIDDEN("403", "没有相关权限"),
+    NOEXPIRETOKEN("405", "该token未失效，可用");
 
 
     private String code;

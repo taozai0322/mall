@@ -66,4 +66,11 @@ public class UmsAdminServiceTest {
         umsAdminLoginLogMapper.insert(umsAdminLoginLog);
 
     }
+
+    @Test
+    public void getUserList(){
+//        List<UmsAdmin> umsAdminList = umsAdminRoleRelationDao.getUmsAdminList( 1, 5);
+        UmsAdmin admin = umsAdminRoleRelationDao.getUmsAdminByName("taozai");
+        log.info("打印的UserList:{}",admin);
+     }
 }

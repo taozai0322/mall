@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
@@ -28,6 +29,10 @@ import java.util.Map;
 @Component
 @Slf4j
 public class JwtTokenUtil {
+
+    @Autowired
+    private DateUtil dateUtil;
+
     private static final String CLAIM_KEY_USERNAME = "sub";
     private static final String CLAIM_KEY_CREATED = "created";
     //密钥
@@ -68,7 +73,7 @@ public class JwtTokenUtil {
         try {
             claims = Jwts.parser()
                     .setSigningKey(secret)
-                    .parseClaimsJwt(token)
+                    .parseClaimsJws(token)
                     .getBody();
         }catch (Exception e){
             log.info("JWT格式验证失败：{}",token);
@@ -111,8 +116,9 @@ public class JwtTokenUtil {
      */
     public boolean isTokenExpired(String token){
         Date expiredDate = getExpiredDateFromToken(token);
-        log.info("token的有效时间：{}",expiredDate);
-        return expiredDate.before(new Date()); //当expiredDate小于new Date()时，返回TRUE，当大于等于时，返回false
+        log.info("token的有效时间：{}",dateUtil.formatDate(expiredDate));
+        log.info("token的有效时间的返回：{}",expiredDate.before(new Date()));
+        return expiredDate.before(new Date());
     }
 
     /**
@@ -143,7 +149,7 @@ public class JwtTokenUtil {
      * @return
      */
     public boolean canReflesh(String token){
-        return !isTokenExpired(token);   //判断token是否已经失效，若失效，则可以刷新吗，反之
+        return isTokenExpired(token);   //判断token是否已经失效，若失效，则可以刷新吗，反之
     }
 
     /**
@@ -153,6 +159,7 @@ public class JwtTokenUtil {
      */
     public String refleshToken(String token){
         Claims claims = getClaimsFromToken(token);
+        log.info("刷新Token的claims的值：{}",claims);
         claims.put(CLAIM_KEY_CREATED,new Date());
         return generateToken(claims);
     }

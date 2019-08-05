@@ -3,6 +3,8 @@ package com.ym.mall.service;
 import com.ym.mall.dto.UmsAdminRegisterParams;
 import com.ym.mall.model.UmsAdmin;
 import com.ym.mall.model.UmsPermission;
+import com.ym.mall.model.UmsRole;
+import io.swagger.models.auth.In;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -41,4 +43,27 @@ public interface UmsAdminService {
      * @return
      */
     List<UmsPermission> getPermissionList(long adminId);
+
+    /**
+     * 刷新Token的功能
+     * @param oldToken 旧的Token
+     * @return
+     */
+    String refleshToken(String oldToken);
+
+    /**
+     * 查询后台管理用户所有的角色
+     * @param id
+     * @return
+     */
+    List<UmsRole> getUmsRoleById(long id);
+
+    /**
+     * 根据用户名或者昵称查询用户列表
+     * @param name
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    List<UmsAdmin> getUmsAdminList(String name, Integer pageNum,Integer pageSize);
 }

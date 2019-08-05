@@ -1,8 +1,11 @@
 package com.ym.mall.dao;
 
+import com.ym.mall.model.UmsAdmin;
 import com.ym.mall.model.UmsPermission;
+import com.ym.mall.model.UmsRole;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.security.core.parameters.P;
 
 import java.util.List;
 
@@ -19,4 +22,27 @@ public interface UmsAdminRoleRelationDao {
      * @return
      */
     List<UmsPermission> getPermissionList(@Param("adminId") long adminId);
+
+    /**
+     * 获取当前用户所拥有的角色
+     * @param adminId
+     * @return
+     */
+    List<UmsRole> getUmsRoleList(@Param("adminId") long adminId);
+
+    /**
+     * 查询后台管理员用户的列表
+     * @param pageNum
+     * @param pageSize
+     * @return
+     */
+    List<UmsAdmin> getUmsAdminList(@Param("pageNum") Integer pageNum,
+                                   @Param("pageSize") Integer pageSize);
+
+    /**
+     * 根据管理员用户的名称查询
+     * @param name
+     * @return
+     */
+    UmsAdmin getUmsAdminByName(@Param("name") String name);
 }

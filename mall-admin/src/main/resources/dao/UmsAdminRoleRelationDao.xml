@@ -33,4 +33,31 @@
             pr.type = 1
             AND pr.admin_id = #{adminId}
     </select>
+
+    <!--获取用户的所有权限（包括+-权限）-->
+    <select id="getUmsRoleList" parameterType="java.lang.Long" resultType="com.ym.mall.model.UmsRole">
+        SELECT
+            r.`name`
+        FROM
+            ums_role r
+        WHERE
+            id IN (
+                SELECT
+                    udr.role_id
+                FROM
+                    ums_admin_role_relation udr
+                WHERE
+                    udr.admin_id = #{adminId}
+            )
+    </select>
+
+    <!--查询后台管理员用户的列表-->
+    <select id="getUmsAdminList" parameterType="java.lang.Integer" resultType="com.ym.mall.model.UmsAdmin">
+        SELECT * FROM  ums_admin  limit #{pageNum},#{pageSize}
+    </select>
+
+    <!--查询后台管理员用户的列表-->
+    <select id="getUmsAdminByName" parameterType="java.lang.String" resultType="com.ym.mall.model.UmsAdmin">
+        SELECT * FROM  ums_admin WHERE username = #{name}
+    </select>
 </mapper>
