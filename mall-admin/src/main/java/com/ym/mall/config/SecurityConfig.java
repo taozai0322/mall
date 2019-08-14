@@ -50,6 +50,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                         ).permitAll()
                         .antMatchers("/admin/login","/admin/register")  //注册和登录允许匿名访问
                         .permitAll()
+                        .antMatchers("/**")
+                        .permitAll()
                         .anyRequest() //除上面外的所有请求全部需要鉴权认证
                         .authenticated();
                 //禁用缓存

@@ -1,9 +1,11 @@
 package com.ym.mall.service.impl;
 
+import cn.hutool.core.collection.CollectionUtil;
 import com.ym.mall.dao.UmsAdminRoleRelationDao;
 import com.ym.mall.dto.UmsAdminRegisterParams;
 import com.ym.mall.mapper.UmsAdminLoginLogMapper;
 import com.ym.mall.mapper.UmsAdminMapper;
+import com.ym.mall.mapper.UmsAdminRoleRelationMapper;
 import com.ym.mall.model.*;
 import com.ym.mall.service.UmsAdminService;
 import com.ym.mall.util.JwtTokenUtil;
@@ -11,6 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.cglib.core.CollectionUtils;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
@@ -45,7 +48,8 @@ public class UmsAdminServiceImpl implements UmsAdminService {
     private UmsAdminMapper umsAdminMapper;
     @Autowired
     private UmsAdminRoleRelationDao umsAdminRoleRelationDao;
-
+    @Autowired
+    private UmsAdminRoleRelationMapper umsAdminRoleRelationMapper;
     @Autowired
     private JwtTokenUtil jwtTokenUtil;
     @Autowired
@@ -189,5 +193,76 @@ public class UmsAdminServiceImpl implements UmsAdminService {
         UmsAdmin umsAdmin = umsAdminRoleRelationDao.getUmsAdminByName(name);
         umsAdmins.add(umsAdmin);
         return umsAdmins;
+    }
+
+    /**
+     * 根据管理员的用户Id 删除指定用户信息
+     * @param id
+     * @return
+     */
+    @Override
+    public int deleteById(long id) {
+        return umsAdminMapper.deleteByPrimaryKey(id);
+    }
+
+    /**
+     * 获取指定的管理员用户的角色
+     * @param adminId
+     * @return
+     */
+    @Override
+    public List<UmsRole> getUmsRoleByAdminId(long adminId) {
+        return umsAdminRoleRelationDao.getUmsRoleList(adminId);
+    }
+
+    /**
+     * 修改指定用户的信息
+     * @param adminId
+     * @param umsAdmin
+     * @return
+     */
+    @Override
+    public int updateUmsAdminByAdminId(long adminId, UmsAdmin umsAdmin) {
+        umsAdmin.setId(adminId);
+        umsAdmin.setPassword(null);
+        return umsAdminMapper.updateByPrimaryKeySelective(umsAdmin);
+    }
+
+    /**
+     * 修改用户角色关系
+     * @param adminId
+     * @param roleIds
+     * @return
+     */
+    @Override
+    public int updateAdminRole(Long adminId, List<Long> roleIds) {
+        //获取角色的数量
+        int count = roleIds == null ? 0 : roleIds.size();
+        //先删除之前的角色对应关系
+        UmsAdminRoleRelationExample umsAdminRoleRelationExample = new UmsAdminRoleRelationExample();
+        umsAdminRoleRelationExample.createCriteria().andAdminIdEqualTo(adminId);
+        umsAdminRoleRelationMapper.deleteByExample(umsAdminRoleRelationExample);
+        //建立新的角色对应关系
+        if(!CollectionUtil.isEmpty(roleIds)){
+            List<UmsAdminRoleRelation>  list = new ArrayList<>();
+            for(long roleId:roleIds){
+                UmsAdminRoleRelation adminRoleRelation = new UmsAdminRoleRelation();
+                adminRoleRelation.setAdminId(adminId);
+                adminRoleRelation.setRoleId(roleId);
+                list.add(adminRoleRelation);
+            }
+            umsAdminRoleRelationDao.insertRolesList(list);
+        }
+        return count;
+    }
+
+    /**
+     * 获取指定用户的权限
+     * @param adminId
+     * @return
+     */
+    @Override
+    public List<UmsPermission> getPermissionByAdminId(long adminId) {
+        return umsAdminRoleRelationDao.getPermissionByAdminId(adminId);
     }
 }

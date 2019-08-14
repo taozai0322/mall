@@ -6,6 +6,7 @@ import com.ym.mall.model.UmsPermission;
 import com.ym.mall.model.UmsRole;
 import io.swagger.models.auth.In;
 import org.apache.ibatis.annotations.Param;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -66,4 +67,42 @@ public interface UmsAdminService {
      * @return
      */
     List<UmsAdmin> getUmsAdminList(String name, Integer pageNum,Integer pageSize);
+
+    /**
+     *根据管理员的用户Id 删除指定用户信息
+     * @param id
+     * @return
+     */
+    int deleteById(long id);
+
+    /**
+     * 获取指定的管理员用户的角色
+     * @param id
+     * @return
+     */
+    List<UmsRole> getUmsRoleByAdminId(long adminId);
+
+    /**
+     * 修改指定用户信息
+     * @param adminId
+     * @param umsAdmin
+     * @return
+     */
+    int updateUmsAdminByAdminId(long adminId,UmsAdmin umsAdmin);
+
+    /**
+     * 修改用户角色关系
+     * @param adminId
+     * @param roleIds
+     * @return
+     */
+    @Transactional
+    int updateAdminRole(Long adminId,List<Long> roleIds);
+
+    /**
+     * 获取指定用户的权限
+     * @param adminId
+     * @return
+     */
+    List<UmsPermission> getPermissionByAdminId(long adminId);
 }

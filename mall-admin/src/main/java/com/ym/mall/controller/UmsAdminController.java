@@ -6,10 +6,12 @@ import com.ym.mall.common.api.ResultCode;
 import com.ym.mall.dto.UmsAdminLoginParams;
 import com.ym.mall.dto.UmsAdminRegisterParams;
 import com.ym.mall.model.UmsAdmin;
+import com.ym.mall.model.UmsPermission;
 import com.ym.mall.model.UmsRole;
 import com.ym.mall.service.UmsAdminService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -109,5 +111,57 @@ public class UmsAdminController {
             return ResponseResult.fail("未查到用户信息");
         }
         return ResponseResult.success(CommonPage.restPage(umsAdminList));
+    }
+
+    @ApiOperation(value = "根据Id删除指定用户信息")
+    @PostMapping(value = "/delete/{adminId}")
+    public ResponseResult deleteById(@PathVariable("adminId") long id){
+        int count = umsAdminService.deleteById(id);
+        if(count > 0){
+            return ResponseResult.success(count);
+        }
+        return ResponseResult.fail("删除指定用户信息失败");
+    }
+
+    @ApiOperation(value = "获取指定管理员用户的角色")
+    @GetMapping(value = "/role/{adminId}")
+    public ResponseResult getUmsRoleByAdminId(@PathVariable("adminId")long adminId){
+        log.info("获取指定管理员用户的角色：{}",adminId);
+        List<UmsRole> umsRoleList = umsAdminService.getUmsRoleByAdminId(adminId);
+        if(umsRoleList == null || umsRoleList.size() == 0){
+            return ResponseResult.success("查不到信息");
+        }
+        return ResponseResult.success(umsRoleList);
+    }
+
+    @ApiOperation(value = "修改指定用户的信息")
+    @PostMapping(value = "/update/{adminId}")
+    public ResponseResult updateUmsAdminByAdminId(@PathVariable("adminId") long adminId,@RequestBody UmsAdmin umsAdmin){
+        int count = umsAdminService.updateUmsAdminByAdminId(adminId, umsAdmin);
+        if(count > 0){
+            return ResponseResult.success(count);
+        }
+        return ResponseResult.fail("修改指定用户的信息失败");
+    }
+
+    @ApiOperation(value = "给用户分配角色")
+    @PostMapping(value = "/role/update")
+    public ResponseResult updateRolesList(@RequestParam("adminId") Long adminId,
+                                          @RequestParam("roleIds") List<Long> roleIds){
+        log.info("给用户分配角色的入参adminId：{}",adminId);
+        log.info("给用户分配角色的入参roleIds：{}",roleIds);
+        int count = umsAdminService.updateAdminRole(adminId, roleIds);
+        if(count > 0){
+            return ResponseResult.success(count);
+        }
+        return ResponseResult.fail("给用户分配角色失败");
+    }
+
+
+    @ApiOperation(value = "获取指定用户的权限")
+    @GetMapping(value = "/permission/{adminId}")
+    public ResponseResult getPermissionByAdminId(@RequestParam("adminId") long adminId){
+        List<UmsPermission> umsPermissionList = umsAdminService.getPermissionByAdminId(adminId);
+        return ResponseResult.success(umsPermissionList);
     }
 }
