@@ -1,6 +1,8 @@
 package com.ym.mall.dao;
 
+import com.ym.mall.model.UmsAdminRoleRelation;
 import com.ym.mall.model.UmsPermission;
+import com.ym.mall.model.UmsRolePermissionRelation;
 import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
@@ -25,4 +27,11 @@ public interface UmsRoleDao {
      * @return
      */
     List<UmsPermission> getPermissionsByRoleId(@Param("roleId") Long roleId);
+
+    /**
+     * 批量插入角色和权限关系
+     * @param umsRolePermissionRelations
+     * @return
+     */
+    int insertRoleOfPermissionList(@Param("list")List<UmsRolePermissionRelation> umsRolePermissionRelations);
 }

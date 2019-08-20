@@ -2,14 +2,14 @@ package com.ym.mall.service.impl;
 
 import com.ym.mall.dao.UmsRoleDao;
 import com.ym.mall.mapper.UmsRoleMapper;
-import com.ym.mall.model.UmsPermission;
-import com.ym.mall.model.UmsRole;
-import com.ym.mall.model.UmsRoleExample;
+import com.ym.mall.mapper.UmsRolePermissionRelationMapper;
+import com.ym.mall.model.*;
 import com.ym.mall.service.UmsRoleService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -26,6 +26,8 @@ public class UmsRoleServiceImpl implements UmsRoleService {
     private UmsRoleMapper umsRoleMapper;
     @Autowired
     private UmsRoleDao umsRoleDao;
+    @Autowired
+    private UmsRolePermissionRelationMapper umsRolePermissionRelationMapper;
     /**
      * 添加新角色
      * @param umsRole
@@ -69,5 +71,41 @@ public class UmsRoleServiceImpl implements UmsRoleService {
     public List<UmsPermission> getPermissionsByRoleId(Long roleId) {
         List<UmsPermission> permissions = umsRoleDao.getPermissionsByRoleId(roleId);
         return permissions;
+    }
+
+    /**
+     * 修改角色权限
+     * @param roleId
+     * @param permissionIds
+     * @return
+     */
+    @Override
+    public int updatePermissionOfRole(Long roleId, List<Long> permissionIds) {
+        //1、先删除该角色原来对应的所有权限
+        UmsRolePermissionRelationExample example = new UmsRolePermissionRelationExample();
+        example.createCriteria().andRoleIdEqualTo(roleId);
+        umsRolePermissionRelationMapper.deleteByExample(example);
+        //2、批量插入新的角色和权限的对应关系
+        List<UmsRolePermissionRelation> relationList = new ArrayList<>();
+        for (Long permissionId: permissionIds) {
+            UmsRolePermissionRelation rolePermissionRelation = new UmsRolePermissionRelation();
+            rolePermissionRelation.setRoleId(roleId);
+            rolePermissionRelation.setPermissionId(permissionId);
+            relationList.add(rolePermissionRelation);
+        }
+        int count = umsRoleDao.insertRoleOfPermissionList(relationList);
+        return count;
+    }
+
+    /**
+     * 修改角色
+     * @param roleId
+     * @param role
+     * @return
+     */
+    @Override
+    public int updateRole(long roleId, UmsRole role) {
+        role.setId(roleId);
+        return umsRoleMapper.updateByPrimaryKey(role);
     }
 }

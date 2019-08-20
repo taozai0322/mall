@@ -38,4 +38,20 @@ public interface UmsRoleService {
      * @return
      */
     List<UmsPermission> getPermissionsByRoleId(Long roleId);
+
+    /**
+     * 修改角色权限
+     * @param roleId
+     * @param permissionIds
+     * @return
+     */
+    int updatePermissionOfRole(Long roleId,List<Long> permissionIds);
+
+    /**
+     * 修改角色
+     * @param roleId
+     * @param role
+     * @return
+     */
+    int updateRole(long roleId,UmsRole role);
 }

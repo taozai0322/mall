@@ -57,4 +57,25 @@ public class UmsRoleController {
     public ResponseResult getPermissionsByRoleId(@PathVariable("roleId") Long roleId){
         return ResponseResult.success(umsRoleService.getPermissionsByRoleId(roleId));
     }
+
+    @ApiOperation(value = "修改角色权限")
+    @PostMapping(value = "/permission/update")
+    public ResponseResult updatePermissionOfRole(@RequestParam("roleId") Long roleId,
+                                                 @RequestParam("permissionIds")List<Long> permissionIds){
+        int count = umsRoleService.updatePermissionOfRole(roleId, permissionIds);
+        if(count > 0){
+            return ResponseResult.success(count);
+        }
+        return ResponseResult.fail("修改角色权限失败");
+    }
+
+    @ApiOperation(value = "修改角色")
+    @PostMapping("/update/{roleId}")
+    public ResponseResult updateRole(@RequestParam("roleId") Long roleId, @RequestBody UmsRole role){
+        int count = umsRoleService.updateRole(roleId, role);
+        if(count > 0){
+            return ResponseResult.success(count);
+        }
+        return ResponseResult.fail("修改角色失败");
+    }
 }
