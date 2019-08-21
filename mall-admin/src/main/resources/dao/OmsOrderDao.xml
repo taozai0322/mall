@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.ym.mall.dao.OmsOrderDao">
+
+
+    <!--获取相应角色的权限-->
+    <select id="getOrderList"  resultMap="com.ym.mall.mapper.OmsOrderMapper.BaseResultMap">
+        SELECT
+            *
+        FROM
+            oms_order
+        WHERE
+            delete_status = 0
+        <if test="queryParams.orderSn != null and queryParams.orderSn != ''">
+            AND order_sn = #{queryParams.orderSn}
+        </if>
+        <if test="queryParams.status != null">
+            AND status = #{queryParams.status}
+        </if>
+        <if test="queryParams.orderType != null">
+            AND order_type = #{queryParams.orderType}
+        </if>
+        <if test="queryParams.status != null">
+            AND source_type = #{queryParams.sourceType}
+        </if>
+        <if test="queryParams.createTime != null and queryParams.createTime != ''">
+            AND create_time LIKE CONCAT(#{queryParams.createTime},'%')
+        </if>
+        <if test="queryParams.receiverKeyword != null and queryParams.receiverKeyword != ''">
+            AND receiver_name LIKE CONCAT('%',#{queryParams.receiverKeyword},'%')
+            OR receiver_phone LIKE CONCAT('%',#{queryParams.receiverKeyword},'%')
+        </if>
+    </select>
+
+</mapper>
