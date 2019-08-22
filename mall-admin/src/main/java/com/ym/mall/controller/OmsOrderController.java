@@ -36,4 +36,14 @@ public class OmsOrderController {
         return ResponseResult.success(CommonPage.restPage(orderList));
 
     }
+
+    @ApiOperation(value = "根据Id批量删除订单")
+    @PostMapping(value = "/delete")
+    public ResponseResult batchDeleteOrderById(@RequestParam("ids") List<Long> ids,@RequestParam("note") String note){
+        int count = omsOrderService.batchDeleteOrderById(ids,note);
+        if(count > 0){
+            return ResponseResult.success(count);
+        }
+        return ResponseResult.fail("根据Id批量删除订单失败");
+    }
 }

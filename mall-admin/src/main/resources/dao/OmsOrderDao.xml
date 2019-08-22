@@ -3,7 +3,7 @@
 <mapper namespace="com.ym.mall.dao.OmsOrderDao">
 
 
-    <!--获取相应角色的权限-->
+    <!--获取订单列表-->
     <select id="getOrderList"  resultMap="com.ym.mall.mapper.OmsOrderMapper.BaseResultMap">
         SELECT
             *
@@ -32,4 +32,40 @@
         </if>
     </select>
 
+    <!--根据Id批量删除订单-->
+    <delete id="batchDeleteOrderById" parameterType="java.lang.Long">
+        DELETE FROM oms_order WHERE id IN(
+        <foreach collection="ids" separator="," item="id" index="index">
+            #{id}
+        </foreach>)
+    </delete>
+
+    <!--批量关闭订单：订单状态为：0：未付款时，才属于关闭-->
+    <update id="batchCloseOrder" parameterType="java.util.List">
+         <foreach  collection="list" index="index" item="item" open="" close="" separator=";">
+            update oms_order
+            <trim prefix="set" suffixOverrides=",">
+                status = 4
+            </trim>
+            <where> id = #{item.id} and status = 0</where>
+         </foreach>
+    </update>
+
+    <!--批量插入订单的操作历史记录-->
+    <insert id="insertOrderOpretaHistory">
+        INSERT INTO oms_order_operate_history (
+        order_id,
+        operate_man,
+        create_time,
+        order_status,
+        note
+        )VALUES
+        <foreach collection="list" separator="," item="item" index="index">
+            (#{item.orderId},
+            #{item.operateMan},
+            #{item.createTime},
+            #{item.orderStatus},
+            #{item.note})
+        </foreach>
+    </insert>
 </mapper>

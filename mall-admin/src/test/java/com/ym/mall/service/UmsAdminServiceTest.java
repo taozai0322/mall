@@ -1,12 +1,10 @@
 package com.ym.mall.service;
 
+import com.ym.mall.dao.OmsOrderDao;
 import com.ym.mall.dao.UmsAdminRoleRelationDao;
 import com.ym.mall.mapper.UmsAdminLoginLogMapper;
 import com.ym.mall.mapper.UmsAdminMapper;
-import com.ym.mall.model.UmsAdmin;
-import com.ym.mall.model.UmsAdminExample;
-import com.ym.mall.model.UmsAdminLoginLog;
-import com.ym.mall.model.UmsPermission;
+import com.ym.mall.model.*;
 import lombok.extern.slf4j.Slf4j;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -14,8 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -73,4 +70,31 @@ public class UmsAdminServiceTest {
         UmsAdmin admin = umsAdminRoleRelationDao.getUmsAdminByName("taozai");
         log.info("打印的UserList:{}",admin);
      }
+
+     @Autowired
+    private OmsOrderDao omsOrderDao;
+
+    @Test
+    public void omsOrderDao(){
+        List ids = new ArrayList<>();
+        Map<String,Long> map = new HashMap<>();
+        map.put("id",23L);
+        ids.add(map);
+        int count = omsOrderDao.batchCloseOrder(ids);
+        log.info("count:{}",count);
+    }
+
+    @Test
+    public void insertOperate(){
+        OmsOrderOperateHistory history = new OmsOrderOperateHistory();
+        history.setOrderId(12L);
+        history.setCreateTime(new Date());
+        history.setNote("测试一下");
+        history.setOperateMan("tao");
+        List<OmsOrderOperateHistory> list = new ArrayList<>();
+        list.add(history);
+        int count = omsOrderDao.insertOrderOpretaHistory(list);
+        log.info("count:{}",count);
+
+    }
 }
