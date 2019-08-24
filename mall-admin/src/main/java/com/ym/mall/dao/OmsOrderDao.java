@@ -38,4 +38,11 @@ public interface OmsOrderDao {
      * @return
      */
     int insertOrderOpretaHistory(@Param("list") List<OmsOrderOperateHistory> operateHistoryList);
+
+    /**
+     * 根据Id批量删除订单
+     * @param ids
+     * @return
+     */
+    int batchDeleteOrder(List<Long> ids);
 }

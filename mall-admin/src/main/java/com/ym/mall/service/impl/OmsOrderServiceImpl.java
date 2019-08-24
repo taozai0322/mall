@@ -48,7 +48,7 @@ public class OmsOrderServiceImpl implements OmsOrderService {
      * @return
      */
     @Override
-    public int batchDeleteOrderById(List<Long> ids,String note) {
+    public int batchCloseOrderById(List<Long> ids,String note) {
         //删除订单列表的订单
         List list = new ArrayList<>();
         for(Long id :ids){
@@ -58,13 +58,38 @@ public class OmsOrderServiceImpl implements OmsOrderService {
         }
         log.info("批量的入参：{}",list);
         omsOrderDao.batchCloseOrder(list);
-        //记录的删除订单的操作
+        //记录的关闭订单的操作
         List<OmsOrderOperateHistory> historyList = new ArrayList<>();
         for(Long orderId:ids){
             OmsOrderOperateHistory operateHistory = new OmsOrderOperateHistory();
             operateHistory.setOperateMan("taozai"); //暂时设置，以后从Session中获取
             operateHistory.setNote(note);
             operateHistory.setOrderId(orderId);
+            operateHistory.setOrderStatus(4);//4：关闭订单
+            operateHistory.setCreateTime(new Date());
+            historyList.add(operateHistory);
+        }
+        int count = omsOrderDao.insertOrderOpretaHistory(historyList);
+        return count;
+    }
+
+    /**
+     * 根据Id批量删除订单
+     * @param ids
+     * @return
+     */
+    @Override
+    public int batchDeleteOrderById(List<Long> ids) {
+        //删除订单
+        omsOrderDao.batchDeleteOrder(ids);
+        //记录的删除订单的操作
+        List<OmsOrderOperateHistory> historyList = new ArrayList<>();
+        for(Long orderId:ids){
+            OmsOrderOperateHistory operateHistory = new OmsOrderOperateHistory();
+            operateHistory.setOperateMan("taozai"); //暂时设置，以后从Session中获取
+            operateHistory.setNote("删除订单");
+            operateHistory.setOrderId(orderId);
+            operateHistory.setOrderStatus(6);//6：关闭订单
             operateHistory.setCreateTime(new Date());
             historyList.add(operateHistory);
         }

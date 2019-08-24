@@ -22,10 +22,19 @@ public interface OmsOrderService {
     List<OmsOrder> getOrderList(OmsOrderQueryParams queryParams, Integer pageNum, Integer pageSize);
 
     /**
-     * 根据Id批量删除订单
+     * 根据Id批量关闭订单
      * @param ids
      * @param note
      * @return
      */
-    int batchDeleteOrderById(List<Long> ids,String note);
+    int batchCloseOrderById(List<Long> ids,String note);
+
+    /**
+     * 根据Id批量删除订单
+     * @param ids
+     * @return
+     */
+    int batchDeleteOrderById(List<Long> ids);
+
+    
 }

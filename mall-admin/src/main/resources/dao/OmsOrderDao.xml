@@ -68,4 +68,12 @@
             #{item.note})
         </foreach>
     </insert>
+
+    <!--根据Id批量删除订单-->
+    <delete id="batchDeleteOrder">
+        DELETE FROM oms_order WHERE id IN (
+        <foreach collection="list" separator="," item="id" index="index">
+            #{id}
+        </foreach>)
+    </delete>
 </mapper>
